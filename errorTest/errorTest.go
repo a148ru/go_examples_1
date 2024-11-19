@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -36,5 +37,20 @@ func testFunc(i int) error {
 func main() {
 	if err := testFunc(0); err != nil {
 		fmt.Println(err)
+	}
+
+	/*
+		лучше применить функцию As пакета errors, так как она,
+		в отличие от type assertion, работает с «обёрнутыми» ошибками,
+		которые разберём ниже. As находит первую в цепочке ошибку err,
+		устанавливает тип, равным этому значению ошибки, и возвращает true
+	*/
+	if err := testFunc(0); err != nil {
+		var te TimeError
+		if ok := errors.As(err, &te); ok { //  Сравниваем полученную и контрольную ошибки. Сравнение идёт по типу ошибки.
+			fmt.Println(te.Time, te.Text)
+		} else {
+			fmt.Println(err)
+		}
 	}
 }
